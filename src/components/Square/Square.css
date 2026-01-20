@@ -1,0 +1,18 @@
+.square {
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background: transparent;
+  border: 3px solid;
+}
+.square:hover {
+  background-color: #f0f0f0;
+}
+.square:disabled {
+  cursor: not-allowed;
+  color: #888;
+}

@@ -1,0 +1,14 @@
+.settings {
+  margin: 20px auto;
+  padding: 10px;
+  border: 2px solid #ccc;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.settings label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

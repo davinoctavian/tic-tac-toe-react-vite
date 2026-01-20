@@ -1,35 +1,70 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { useState, useContext } from "react";
+import Board from "./components/Board";
+import Scoreboard from "./components/Scoreboard/Scoreboard";
+import Settings from "./components/Settings/Settings";
+import { calculateWinner } from "./utils/gameLogic";
+import useLocalStorage from "./hooks/useLocalStorage";
+import { SettingsContext } from "./context/SettingsContext";
 
-function App() {
-  const [count, setCount] = useState(0);
+export default function App() {
+  const { settings } = useContext(SettingsContext);
+
+  const [squares, setSquares] = useState<(string | null)[]>(
+    Array(9).fill(null),
+  );
+  const [xIsNext, setXIsNext] = useState(true);
+  const [scores, setScores] = useLocalStorage<{ X: number; O: number }>(
+    "scores",
+    { X: 0, O: 0 },
+  );
+
+  const winner = calculateWinner(squares);
+
+  const handleClick = (i: number) => {
+    if (squares[i] || winner) return;
+
+    const newSquares = squares.slice();
+    newSquares[i] = xIsNext ? "X" : "O";
+    setSquares(newSquares);
+    setXIsNext(!xIsNext);
+  };
+
+  const handleReset = () => {
+    setSquares(Array(9).fill(null));
+    setXIsNext(true);
+  };
+
+  if (winner) {
+    setTimeout(() => {
+      setScores({ ...scores, [winner]: scores[winner as "X" | "O"] + 1 });
+      handleReset();
+    }, 500);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn mor
-      </p>
-    </>
+    <div
+      style={{
+        backgroundColor: settings.backgroundColor,
+        minHeight: "100vh",
+        padding: "20px",
+        textAlign: "center",
+      }}
+    >
+      <h1 style={{ color: settings.borderColor }}>Tic Tac Toe</h1>
+      <Scoreboard
+        scores={scores}
+        xBoardColor={settings.xBoardColor}
+        oBoardColor={settings.oBoardColor}
+      />
+      <Board
+        squares={squares}
+        onClick={handleClick}
+        borderColor={settings.borderColor}
+        xColor={settings.xColor}
+        oColor={settings.oColor}
+      />
+      <button onClick={handleReset}>Reset Game</button>
+      <Settings />
+    </div>
   );
 }
-
-export default App;

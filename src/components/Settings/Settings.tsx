@@ -1,0 +1,109 @@
+import { useContext } from "react";
+import { SettingsContext } from "../../context/SettingsContext";
+import { getContrastColor } from "../../utils/colorUtils";
+import "./Settings.css";
+
+export default function Settings() {
+  const { settings, setSettings } = useContext(SettingsContext);
+  const labelColor = getContrastColor(settings.backgroundColor);
+
+  return (
+    <div className="settings">
+      <h3>Settings</h3>
+      <label style={{ color: labelColor }}>
+        Border Color:
+        <input
+          type="color"
+          value={settings.borderColor}
+          onChange={(e) =>
+            setSettings({ ...settings, borderColor: e.target.value })
+          }
+        />
+      </label>
+      <label style={{ color: labelColor }}>
+        Background Color:
+        <input
+          type="color"
+          value={settings.backgroundColor}
+          onChange={(e) =>
+            setSettings({ ...settings, backgroundColor: e.target.value })
+          }
+        />
+      </label>
+      <label style={{ color: labelColor }}>
+        X Color:
+        <input
+          type="color"
+          value={settings.xColor}
+          onChange={(e) => setSettings({ ...settings, xColor: e.target.value })}
+        />
+      </label>
+      <label style={{ color: labelColor }}>
+        O Color:
+        <input
+          type="color"
+          value={settings.oColor}
+          onChange={(e) => setSettings({ ...settings, oColor: e.target.value })}
+        />
+      </label>
+      <label style={{ color: labelColor }}>
+        X Score Color:
+        <input
+          type="color"
+          value={settings.xBoardColor}
+          onChange={(e) =>
+            setSettings({ ...settings, xBoardColor: e.target.value })
+          }
+        />
+      </label>
+      <label style={{ color: labelColor }}>
+        O Score Color:
+        <input
+          type="color"
+          value={settings.oBoardColor}
+          onChange={(e) =>
+            setSettings({ ...settings, oBoardColor: e.target.value })
+          }
+        />
+      </label>
+      <label style={{ color: labelColor }}>
+        Player 1 Symbol:
+        <select
+          value={settings.player1Symbol}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              player1Symbol: e.target.value as "X" | "O",
+            })
+          }
+        >
+          <option value="X" disabled={settings.player2Symbol === "X"}>
+            X
+          </option>
+          <option value="O" disabled={settings.player2Symbol === "O"}>
+            O
+          </option>
+        </select>
+      </label>
+      <label style={{ color: labelColor }}>
+        Player 2 Symbol:
+        <select
+          value={settings.player2Symbol}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              player2Symbol: e.target.value as "X" | "O",
+            })
+          }
+        >
+          <option value="X" disabled={settings.player1Symbol === "X"}>
+            X
+          </option>
+          <option value="O" disabled={settings.player1Symbol === "O"}>
+            O
+          </option>
+        </select>
+      </label>
+    </div>
+  );
+}
