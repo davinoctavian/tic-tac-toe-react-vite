@@ -1,10 +1,11 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Board from "./components/Board";
 import Scoreboard from "./components/Scoreboard/Scoreboard";
 import Settings from "./components/Settings/Settings";
 import { calculateWinner } from "./utils/gameLogic";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { SettingsContext } from "./context/SettingsContext";
+import "./App.css";
 
 export default function App() {
   const { settings } = useContext(SettingsContext);
@@ -12,7 +13,7 @@ export default function App() {
   const [squares, setSquares] = useState<(string | null)[]>(
     Array(9).fill(null),
   );
-  const [xIsNext, setXIsNext] = useState(true);
+  const [xIsNext, setXIsNext] = useState(settings?.player1Symbol === "X");
   const [scores, setScores] = useLocalStorage<{ X: number; O: number }>(
     "scores",
     { X: 0, O: 0 },
@@ -41,30 +42,65 @@ export default function App() {
     }, 500);
   }
 
+  useEffect(() => {
+    // whenever player assignments change, reset scores and change turn
+    setScores({ X: 0, O: 0 });
+    setXIsNext(settings.player1Symbol === "X");
+  }, [settings.player1Symbol, settings.player2Symbol]);
+
+  const player1Score = settings.player1Symbol
+    ? scores[settings.player1Symbol]
+    : 0;
+  const player2Score = settings.player2Symbol
+    ? scores[settings.player2Symbol]
+    : 0;
+
   return (
     <div
+      className="container"
       style={{
         backgroundColor: settings.backgroundColor,
-        minHeight: "100vh",
-        padding: "20px",
-        textAlign: "center",
       }}
     >
-      <h1 style={{ color: settings.borderColor }}>Tic Tac Toe</h1>
-      <Scoreboard
-        scores={scores}
-        xBoardColor={settings.xBoardColor}
-        oBoardColor={settings.oBoardColor}
-      />
-      <Board
-        squares={squares}
-        onClick={handleClick}
-        borderColor={settings.borderColor}
-        xColor={settings.xColor}
-        oColor={settings.oColor}
-      />
-      <button onClick={handleReset}>Reset Game</button>
-      <Settings />
+      <div className="title-content">
+        <h1 style={{ color: settings.borderColor }}>Tic Tac Toe</h1>
+      </div>
+      <div>
+        <h3 style={{ color: settings.borderColor }}>
+          Player 1: {settings.player1Symbol} | Player 2:{" "}
+          {settings.player2Symbol}
+        </h3>
+        <h3 style={{ color: settings.borderColor }}>
+          Player {xIsNext ? 1 : 2} Turn
+        </h3>
+      </div>
+      <div className="main-content">
+        <div className="content-board">
+          <Scoreboard
+            player1Score={player1Score}
+            player2Score={player2Score}
+            player1Symbol={settings.player1Symbol}
+            player2Symbol={settings.player2Symbol}
+            xBoardColor={settings.xBoardColor}
+            oBoardColor={settings.oBoardColor}
+          />
+          <Board
+            disabled={
+              settings.player1Symbol === undefined ||
+              settings.player2Symbol === undefined
+            }
+            squares={squares}
+            onClick={handleClick}
+            borderColor={settings.borderColor}
+            xColor={settings.xColor}
+            oColor={settings.oColor}
+          />
+          <button onClick={handleReset}>Reset Game</button>
+        </div>
+        <div className="content-settings">
+          <Settings />
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,15 +1,16 @@
-import React, { createContext, useState } from "react";
-import type { Settings } from "../Components/Settings/types";
+import React, { createContext } from "react";
+import type { Settings } from "../components/Settings/types";
+import useLocalStorage from "../hooks/useLocalStorage";
 
 const defaultSettings: Settings = {
   borderColor: "#000000",
   backgroundColor: "#ffffff",
   xColor: "#ff0000",
   oColor: "#0000ff",
-  xBoardColor: "#f0f0f0",
-  oBoardColor: "#e0e0e0",
-  player1Symbol: "X",
-  player2Symbol: "O",
+  xBoardColor: "#ff0000",
+  oBoardColor: "#0000ff",
+  player1Symbol: undefined,
+  player2Symbol: undefined,
 };
 
 export const SettingsContext = createContext<{
@@ -23,7 +24,10 @@ export const SettingsContext = createContext<{
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [settings, setSettings] = useLocalStorage<Settings>(
+    "settings",
+    defaultSettings,
+  );
 
   return (
     <SettingsContext.Provider value={{ settings, setSettings }}>

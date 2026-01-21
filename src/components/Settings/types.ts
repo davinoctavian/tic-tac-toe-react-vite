@@ -3,8 +3,8 @@ export interface Settings {
   backgroundColor: string;
   xColor: string;
   oColor: string;
-  player1Symbol: "X" | "O";
-  player2Symbol: "X" | "O";
+  player1Symbol?: "X" | "O";
+  player2Symbol?: "X" | "O";
   xBoardColor: string;
   oBoardColor: string;
 }

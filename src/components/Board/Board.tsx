@@ -7,6 +7,7 @@ interface BoardProps {
   borderColor: string;
   xColor: string;
   oColor: string;
+  disabled?: boolean;
 }
 
 export default function Board({
@@ -15,9 +16,10 @@ export default function Board({
   borderColor,
   xColor,
   oColor,
+  disabled,
 }: BoardProps) {
   return (
-    <div className="board">
+    <div className={`board ${disabled ? "disabled" : ""}`}>
       {squares.map((val, i) => (
         <Square
           key={i}

@@ -20,7 +20,9 @@ export default function Square({
       onClick={onClick}
       disabled={value !== null}
     >
-      <div style={{ color: valueColor }}>{value}</div>
+      <div className="value" style={{ color: valueColor }}>
+        {value}
+      </div>
     </button>
   );
 }

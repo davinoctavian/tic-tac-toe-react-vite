@@ -9,7 +9,7 @@ export default function Settings() {
 
   return (
     <div className="settings">
-      <h3>Settings</h3>
+      <h3 style={{ color: labelColor }}>Settings</h3>
       <label style={{ color: labelColor }}>
         Border Color:
         <input
@@ -69,11 +69,15 @@ export default function Settings() {
       <label style={{ color: labelColor }}>
         Player 1 Symbol:
         <select
-          value={settings.player1Symbol}
+          name="player1Symbol"
+          value={settings.player1Symbol ?? ""}
           onChange={(e) =>
             setSettings({
               ...settings,
-              player1Symbol: e.target.value as "X" | "O",
+              player1Symbol:
+                e.target.value === ""
+                  ? undefined
+                  : (e.target.value as "X" | "O"),
             })
           }
         >
@@ -83,16 +87,21 @@ export default function Settings() {
           <option value="O" disabled={settings.player2Symbol === "O"}>
             O
           </option>
+          <option value="">Clear</option>
         </select>
       </label>
       <label style={{ color: labelColor }}>
         Player 2 Symbol:
         <select
-          value={settings.player2Symbol}
+          name="player2Symbol"
+          value={settings.player2Symbol ?? ""}
           onChange={(e) =>
             setSettings({
               ...settings,
-              player2Symbol: e.target.value as "X" | "O",
+              player2Symbol:
+                e.target.value === ""
+                  ? undefined
+                  : (e.target.value as "X" | "O"),
             })
           }
         >
@@ -102,6 +111,7 @@ export default function Settings() {
           <option value="O" disabled={settings.player1Symbol === "O"}>
             O
           </option>
+          <option value="">Clear</option>
         </select>
       </label>
     </div>
