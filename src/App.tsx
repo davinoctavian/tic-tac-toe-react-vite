@@ -10,9 +10,14 @@ import "./App.css";
 export default function App() {
   const { settings } = useContext(SettingsContext);
 
-  const [squares, setSquares] = useState<(string | null)[]>(
+  const [history, setHistory] = useState<(string | null)[][]>([
     Array(9).fill(null),
-  );
+  ]);
+  const [currentMove, setCurrentMove] = useState<number>(0);
+  const squares = history[currentMove];
+  // const [squares, setSquares] = useState<(string | null)[]>(
+  //   Array(9).fill(null),
+  // );
   const [xIsNext, setXIsNext] = useState(settings?.player1Symbol === "X");
   const [scores, setScores] = useLocalStorage<{ X: number; O: number }>(
     "scores",
@@ -26,13 +31,25 @@ export default function App() {
 
     const newSquares = squares.slice();
     newSquares[i] = xIsNext ? "X" : "O";
-    setSquares(newSquares);
+    const newHistory = history.slice(0, currentMove + 1);
+    setHistory([...newHistory, newSquares]);
+    setCurrentMove(newHistory.length);
+
     setXIsNext(!xIsNext);
   };
 
   const handleReset = () => {
-    setSquares(Array(9).fill(null));
+    setHistory([Array(9).fill(null)]);
+    setCurrentMove(0);
     setXIsNext(true);
+  };
+
+  const handleUndo = () => {
+    if (currentMove > 0) {
+      const newMove = currentMove - 1;
+      setCurrentMove(newMove);
+      setXIsNext(newMove % 2 === 0);
+    }
   };
 
   if (winner) {
@@ -95,7 +112,12 @@ export default function App() {
             xColor={settings.xColor}
             oColor={settings.oColor}
           />
-          <button onClick={handleReset}>Reset Game</button>
+          <div className="button-content">
+            <button onClick={handleUndo} disabled={currentMove === 0}>
+              Undo
+            </button>
+            <button onClick={handleReset}>Reset Game</button>
+          </div>
         </div>
         <div className="content-settings">
           <Settings />

@@ -11,7 +11,7 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["vite.svg"], // what is use on index.html is include here for service worker caching
+      includeAssets: ["vite.svg", "pwa-192.webp"], // what is use on index.html is include here for service worker caching
       manifest: {
         name: "TicTacToe",
         short_name: "TicTacToe",
