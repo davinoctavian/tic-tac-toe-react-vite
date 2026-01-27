@@ -1,4 +1,5 @@
 export interface Settings {
+  match: number;
   borderColor: string;
   backgroundColor: string;
   xColor: string;

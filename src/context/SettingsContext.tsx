@@ -3,14 +3,15 @@ import type { Settings } from "../components/Settings/types";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 const defaultSettings: Settings = {
+  match: 1,
+  player1Symbol: "X",
+  player2Symbol: "O",
   borderColor: "#000000",
   backgroundColor: "#ffffff",
   xColor: "#ff0000",
   oColor: "#0000ff",
   xBoardColor: "#ff0000",
   oBoardColor: "#0000ff",
-  player1Symbol: undefined,
-  player2Symbol: undefined,
 };
 
 export const SettingsContext = createContext<{

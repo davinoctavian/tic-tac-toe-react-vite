@@ -5,6 +5,7 @@ import Settings from "./components/Settings/Settings";
 import { calculateWinner } from "./utils/gameLogic";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { SettingsContext } from "./context/SettingsContext";
+import { launchConfetti } from "./utils/confetti";
 import "./App.css";
 
 export default function App() {
@@ -15,14 +16,12 @@ export default function App() {
   ]);
   const [currentMove, setCurrentMove] = useState<number>(0);
   const squares = history[currentMove];
-  // const [squares, setSquares] = useState<(string | null)[]>(
-  //   Array(9).fill(null),
-  // );
   const [xIsNext, setXIsNext] = useState(settings?.player1Symbol === "X");
   const [scores, setScores] = useLocalStorage<{ X: number; O: number }>(
     "scores",
     { X: 0, O: 0 },
   );
+  const [winnerMessage, setWinnerMessage] = useState<string | null>(null);
 
   const winner = calculateWinner(squares);
 
@@ -38,7 +37,7 @@ export default function App() {
     setXIsNext(!xIsNext);
   };
 
-  const handleReset = () => {
+  const handleClear = () => {
     setHistory([Array(9).fill(null)]);
     setCurrentMove(0);
     setXIsNext(true);
@@ -52,10 +51,15 @@ export default function App() {
     }
   };
 
+  const handleReset = () => {
+    setScores({ X: 0, O: 0 });
+    handleClear();
+  };
+
   if (winner) {
     setTimeout(() => {
       setScores({ ...scores, [winner]: scores[winner as "X" | "O"] + 1 });
-      handleReset();
+      handleClear();
     }, 500);
   }
 
@@ -72,6 +76,34 @@ export default function App() {
     ? scores[settings.player2Symbol]
     : 0;
 
+  useEffect(() => {
+    const requiredWins = Math.ceil((settings.match ?? 1) / 2);
+
+    if (
+      settings.player1Symbol &&
+      scores[settings.player1Symbol] >= requiredWins
+    ) {
+      setWinnerMessage("🎉 Player 1 Wins the Match!");
+      const color =
+        settings.player1Symbol === "X"
+          ? settings.xBoardColor
+          : settings.oBoardColor;
+      launchConfetti(color);
+    }
+
+    if (
+      settings.player2Symbol &&
+      scores[settings.player2Symbol] >= requiredWins
+    ) {
+      setWinnerMessage("🎉 Player 2 Wins the Match!");
+      const color =
+        settings.player2Symbol === "X"
+          ? settings.xBoardColor
+          : settings.oBoardColor;
+      launchConfetti(color);
+    }
+  }, [scores, settings]);
+
   return (
     <div
       className="container"
@@ -79,6 +111,22 @@ export default function App() {
         backgroundColor: settings.backgroundColor,
       }}
     >
+      {winnerMessage && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <h2>{winnerMessage}</h2>
+            <button
+              onClick={() => {
+                setScores({ X: 0, O: 0 });
+                setWinnerMessage(null);
+              }}
+            >
+              Play Again
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="title-content">
         <h1 style={{ color: settings.borderColor }}>Tic Tac Toe</h1>
       </div>
@@ -116,7 +164,8 @@ export default function App() {
             <button onClick={handleUndo} disabled={currentMove === 0}>
               Undo
             </button>
-            <button onClick={handleReset}>Reset Game</button>
+            <button onClick={handleClear}>Clear</button>
+            <button onClick={handleReset}>Reset</button>
           </div>
         </div>
         <div className="content-settings">
