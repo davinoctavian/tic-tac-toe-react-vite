@@ -1,5 +1,6 @@
 export interface Settings {
   match: number;
+  board: "3" | "4" | "5" | "6";
   borderColor: string;
   backgroundColor: string;
   xColor: string;

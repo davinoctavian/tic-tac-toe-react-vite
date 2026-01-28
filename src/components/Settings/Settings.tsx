@@ -30,6 +30,24 @@ export default function Settings() {
         ></input>
       </label>
       <label style={{ color: labelColor }}>
+        Board:
+        <select
+          name="board"
+          value={settings.board ?? "3"}
+          onChange={(e) =>
+            setSettings({
+              ...settings,
+              board: e.target.value as "3" | "4" | "5" | "6",
+            })
+          }
+        >
+          <option value="3">3 x 3</option>
+          <option value="4">4 x 4</option>
+          <option value="5">5 x 5</option>
+          <option value="6">6 x 6</option>
+        </select>
+      </label>
+      <label style={{ color: labelColor }}>
         Player 1 Symbol:
         <select
           name="player1Symbol"

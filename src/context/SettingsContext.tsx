@@ -4,6 +4,7 @@ import useLocalStorage from "../hooks/useLocalStorage";
 
 const defaultSettings: Settings = {
   match: 1,
+  board: "3",
   player1Symbol: "X",
   player2Symbol: "O",
   borderColor: "#000000",

@@ -10,20 +10,22 @@ import "./App.css";
 
 export default function App() {
   const { settings } = useContext(SettingsContext);
+  const size = parseInt(settings.board ?? "3", 10);
 
-  const [history, setHistory] = useState<(string | null)[][]>([
-    Array(9).fill(null),
+  const [history, setHistory] = useState<string[][]>([
+    Array(size * size).fill(null),
   ]);
   const [currentMove, setCurrentMove] = useState<number>(0);
   const squares = history[currentMove];
-  const [xIsNext, setXIsNext] = useState(settings?.player1Symbol === "X");
   const [scores, setScores] = useLocalStorage<{ X: number; O: number }>(
     "scores",
     { X: 0, O: 0 },
   );
   const [winnerMessage, setWinnerMessage] = useState<string | null>(null);
 
-  const winner = calculateWinner(squares);
+  const winner = calculateWinner(squares, size);
+
+  const xIsNext = currentMove % 2 === 0;
 
   const handleClick = (i: number) => {
     if (squares[i] || winner) return;
@@ -33,21 +35,17 @@ export default function App() {
     const newHistory = history.slice(0, currentMove + 1);
     setHistory([...newHistory, newSquares]);
     setCurrentMove(newHistory.length);
-
-    setXIsNext(!xIsNext);
   };
 
   const handleClear = () => {
-    setHistory([Array(9).fill(null)]);
+    const size = parseInt(settings.board ?? "3", 10);
+    setHistory([Array(size * size).fill(null)]);
     setCurrentMove(0);
-    setXIsNext(true);
   };
 
   const handleUndo = () => {
     if (currentMove > 0) {
-      const newMove = currentMove - 1;
-      setCurrentMove(newMove);
-      setXIsNext(newMove % 2 === 0);
+      setCurrentMove(currentMove - 1);
     }
   };
 
@@ -56,17 +54,27 @@ export default function App() {
     handleClear();
   };
 
-  if (winner) {
-    setTimeout(() => {
-      setScores({ ...scores, [winner]: scores[winner as "X" | "O"] + 1 });
-      handleClear();
-    }, 500);
-  }
+  useEffect(() => {
+    const newSize = parseInt(settings.board ?? "3", 10);
+    setHistory([Array(newSize * newSize).fill(null)]);
+    setCurrentMove(0);
+  }, [settings.board]);
+
+  useEffect(() => {
+    if (winner) {
+      setTimeout(() => {
+        setScores((prev) => ({
+          ...prev,
+          [winner]: prev[winner as "X" | "O"] + 1,
+        }));
+        handleClear();
+      }, 500);
+    }
+  }, [winner]);
 
   useEffect(() => {
     // whenever player assignments change, reset scores and change turn
     setScores({ X: 0, O: 0 });
-    setXIsNext(settings.player1Symbol === "X");
   }, [settings.player1Symbol, settings.player2Symbol]);
 
   const player1Score = settings.player1Symbol
@@ -155,8 +163,10 @@ export default function App() {
               settings.player2Symbol === undefined
             }
             squares={squares}
+            board={settings.board}
             onClick={handleClick}
             borderColor={settings.borderColor}
+            bgColor={settings.backgroundColor}
             xColor={settings.xColor}
             oColor={settings.oColor}
           />

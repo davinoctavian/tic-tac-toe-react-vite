@@ -9,7 +9,7 @@
   position: relative;
 }
 .square:hover {
-  background-color: #f0f0f0;
+  background-color: var(--hover-color);
 }
 .square:disabled {
   cursor: not-allowed;
