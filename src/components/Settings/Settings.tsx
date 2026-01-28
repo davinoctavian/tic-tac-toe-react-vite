@@ -17,14 +17,19 @@ export default function Settings() {
           type="number"
           min="1"
           max="100"
-          value={settings.match ?? 1}
+          value={settings.match ?? ""}
           onChange={(e) => {
+            const val = e.target.value;
+            // allow empty string while typing
+            setSettings({
+              ...settings,
+              match: val === "" ? undefined : parseInt(val, 10),
+            });
+          }}
+          onBlur={(e) => {
             let val = parseInt(e.target.value, 10);
-
-            if (isNaN(val)) val = 1;
-            if (val < 1) val = 1;
+            if (isNaN(val) || val < 1) val = 1;
             if (val > 100) val = 100;
-
             setSettings({ ...settings, match: val });
           }}
         ></input>
