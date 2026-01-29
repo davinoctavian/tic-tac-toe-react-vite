@@ -3,6 +3,7 @@ import type { Settings } from "../components/Settings/types";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 const defaultSettings: Settings = {
+  mode: "pvp",
   match: 1,
   board: "3",
   player1Symbol: "X",
