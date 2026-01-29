@@ -6,6 +6,7 @@ export function calculateWinner(
 
   // helper to check sequence
   const checkLine = (indices: number[]) => {
+    if (indices.some((i) => i >= squares.length)) return null;
     const first = squares[indices[0]];
     if (!first) return null;
     if (indices.every((i) => squares[i] === first)) return first;

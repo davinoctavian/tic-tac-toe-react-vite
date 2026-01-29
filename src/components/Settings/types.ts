@@ -1,4 +1,5 @@
 export interface Settings {
+  mode: "pvp" | "bot";
   match?: number;
   board: "3" | "4" | "5" | "6";
   borderColor: string;

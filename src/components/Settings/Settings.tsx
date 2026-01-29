@@ -11,6 +11,20 @@ export default function Settings() {
     <div className="settings">
       <h3 style={{ color: labelColor }}>Settings</h3>
       <label style={{ color: labelColor }}>
+        Mode:
+        <select
+          name="mode"
+          value={settings.mode ?? "pvp"}
+          onChange={(e) =>
+            setSettings({ ...settings, mode: e.target.value as "pvp" | "bot" })
+          }
+        >
+          <option value="pvp">PvP</option>
+          <option value="bot">Bot</option>
+        </select>
+      </label>
+
+      <label style={{ color: labelColor }}>
         Match
         <input
           name="match"

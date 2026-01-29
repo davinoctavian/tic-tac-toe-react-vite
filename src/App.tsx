@@ -6,6 +6,7 @@ import { calculateWinner } from "./utils/gameLogic";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { SettingsContext } from "./context/SettingsContext";
 import { launchConfetti } from "./utils/confetti";
+import { getBotMove } from "./utils/bot";
 import "./App.css";
 
 export default function App() {
@@ -33,8 +34,23 @@ export default function App() {
     const newSquares = squares.slice();
     newSquares[i] = xIsNext ? "X" : "O";
     const newHistory = history.slice(0, currentMove + 1);
-    setHistory([...newHistory, newSquares]);
-    setCurrentMove(newHistory.length);
+    const updatedHistory = [...newHistory, newSquares];
+    setHistory(updatedHistory);
+    setCurrentMove(updatedHistory.length - 1);
+
+    if (settings.mode === "bot") {
+      setTimeout(() => {
+        const botMove = getBotMove(newSquares, size);
+        if (botMove !== -1) {
+          const botSquares = newSquares.slice();
+          botSquares[botMove] = settings.player2Symbol!;
+
+          const botHistory = [...updatedHistory, botSquares];
+          setHistory(botHistory);
+          setCurrentMove(botHistory.length - 1);
+        }
+      }, 1000);
+    }
   };
 
   const handleClear = () => {
@@ -45,6 +61,10 @@ export default function App() {
 
   const handleUndo = () => {
     if (currentMove > 0) {
+      if (settings.mode === "bot" && currentMove > 1) {
+        setCurrentMove(currentMove - 2);
+        return;
+      }
       setCurrentMove(currentMove - 1);
     }
   };
@@ -58,7 +78,7 @@ export default function App() {
     const newSize = parseInt(settings.board ?? "3", 10);
     setHistory([Array(newSize * newSize).fill(null)]);
     setCurrentMove(0);
-  }, [settings.board]);
+  }, [settings.board, settings.mode]);
 
   useEffect(() => {
     if (winner) {
