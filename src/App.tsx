@@ -23,6 +23,7 @@ export default function App() {
     { X: 0, O: 0 },
   );
   const [winnerMessage, setWinnerMessage] = useState<string | null>(null);
+  const [disableButtons, setDisableButtons] = useState<boolean>(false);
 
   const winner = calculateWinner(squares, size);
 
@@ -32,13 +33,14 @@ export default function App() {
     if (squares[i] || winner) return;
 
     const newSquares = squares.slice();
-    newSquares[i] = xIsNext ? "X" : "O";
+    newSquares[i] = xIsNext ? settings.player1Symbol! : settings.player2Symbol!;
     const newHistory = history.slice(0, currentMove + 1);
     const updatedHistory = [...newHistory, newSquares];
     setHistory(updatedHistory);
     setCurrentMove(updatedHistory.length - 1);
 
     if (settings.mode === "bot") {
+      setDisableButtons(true);
       setTimeout(() => {
         const botMove = getBotMove(newSquares, size);
         if (botMove !== -1) {
@@ -49,6 +51,7 @@ export default function App() {
           setHistory(botHistory);
           setCurrentMove(botHistory.length - 1);
         }
+        setDisableButtons(false);
       }, 1000);
     }
   };
@@ -180,7 +183,8 @@ export default function App() {
           <Board
             disabled={
               settings.player1Symbol === undefined ||
-              settings.player2Symbol === undefined
+              settings.player2Symbol === undefined ||
+              disableButtons
             }
             squares={squares}
             board={settings.board}
